@@ -190,6 +190,7 @@ function App() {
       }))
 
     const accountResults = bankData.accounts
+      .filter(() => sessionUser?.role !== 'csr')
       .filter((account) => normalise(account.accountNumber).includes(term))
       .slice(0, 4)
       .map((account) => ({
@@ -201,7 +202,7 @@ function App() {
       }))
 
     return [...customerResults, ...accountResults]
-  }, [bankData.accounts, bankData.customers, globalSearch])
+  }, [bankData.accounts, bankData.customers, globalSearch, sessionUser?.role])
 
   const notifications = useMemo(
     () => [

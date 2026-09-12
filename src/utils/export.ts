@@ -20,5 +20,11 @@ export const exportRowsToExcel = async (rows: ExportRow[], filename: string) => 
   }
   const headers = Object.keys(rows[0] ?? {})
   const data = [headers, ...rows.map((row) => headers.map((header) => row[header] ?? ''))]
-  await writeExcelFile(data).toFile(filename)
+  const blob = await writeExcelFile(data).toBlob()
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  window.URL.revokeObjectURL(url)
 }

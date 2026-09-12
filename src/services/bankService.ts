@@ -137,10 +137,7 @@ export const updateServiceRequestStatus = (data: BankData, requestId: string, st
     updatedRequest = {
       ...request,
       status,
-      resolvedAt:
-        status === 'resolved'
-          ? request.resolvedAt ?? new Date().toISOString()
-          : request.resolvedAt,
+      resolvedAt: status === 'resolved' ? request.resolvedAt ?? new Date().toISOString() : undefined,
     }
     return updatedRequest
   })
