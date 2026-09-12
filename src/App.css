@@ -382,6 +382,16 @@
   margin-top: 20px;
 }
 
+.opencode-link {
+  color: #7c3aed;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.opencode-link:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 960px) {
   .hero,
   .content-grid,

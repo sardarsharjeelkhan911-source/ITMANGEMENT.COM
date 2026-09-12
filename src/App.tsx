@@ -882,6 +882,14 @@ function App() {
             <span className="label">Session</span>
             <strong>{sessionUser?.fullName ?? 'Guest'}</strong>
             <span className="tag">{sessionUser?.role ?? 'Not signed in'}</span>
+            <a
+              className="opencode-link"
+              href="https://opencode.com"
+              target="_blank"
+              rel="noreferrer"
+            >
+              opencode.com
+            </a>
           </div>
         </aside>
 
@@ -1664,7 +1672,7 @@ function App() {
                     </thead>
                     <tbody>
                       {reportRows.map((row, index) => (
-                        <tr key={`${String(row[Object.keys(row)[0]] ?? '')}-${index}`}>
+                        <tr key={`${reportType}-${index}`}>
                           {Object.values(row).map((cell, cellIndex) => (
                             <td key={`${String(cell)}-${cellIndex}`}>{String(cell)}</td>
                           ))}
