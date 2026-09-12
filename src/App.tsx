@@ -1673,7 +1673,7 @@ function App() {
                     </thead>
                     <tbody>
                       {reportRows.map((row, index) => (
-                        <tr key={`${String(row[Object.keys(row)[0]] ?? '')}-${index}`}>
+                        <tr key={`row-${index}`}>
                           {Object.values(row).map((cell, cellIndex) => (
                             <td key={`${String(cell)}-${cellIndex}`}>{String(cell)}</td>
                           ))}
