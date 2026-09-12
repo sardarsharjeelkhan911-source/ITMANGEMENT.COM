@@ -134,7 +134,14 @@ export const updateServiceRequestStatus = (data: BankData, requestId: string, st
   let updatedRequest: ServiceRequest | undefined
   const serviceRequests = data.serviceRequests.map((request) => {
     if (request.id !== requestId) return request
-    updatedRequest = { ...request, status, resolvedAt: status === 'resolved' ? new Date().toISOString() : undefined }
+    updatedRequest = {
+      ...request,
+      status,
+      resolvedAt:
+        status === 'resolved'
+          ? request.resolvedAt ?? new Date().toISOString()
+          : request.resolvedAt,
+    }
     return updatedRequest
   })
   if (!updatedRequest) throw new Error('Service request not found.')

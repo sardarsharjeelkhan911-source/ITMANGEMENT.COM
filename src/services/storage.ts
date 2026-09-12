@@ -18,9 +18,9 @@ export const saveBankData = (data: BankData) => {
   window.localStorage.setItem(BANK_STORAGE_KEY, JSON.stringify(data))
 }
 
-export const loadSessionUserId = () => window.localStorage.getItem(SESSION_STORAGE_KEY)
-export const saveSessionUserId = (userId: string) => window.localStorage.setItem(SESSION_STORAGE_KEY, userId)
-export const clearSessionUserId = () => window.localStorage.removeItem(SESSION_STORAGE_KEY)
+export const loadSessionUserId = () => window.sessionStorage.getItem(SESSION_STORAGE_KEY)
+export const saveSessionUserId = (userId: string) => window.sessionStorage.setItem(SESSION_STORAGE_KEY, userId)
+export const clearSessionUserId = () => window.sessionStorage.removeItem(SESSION_STORAGE_KEY)
 
 export const appendAuditLog = (data: BankData, action: string, user?: User | null): BankData => ({
   ...data,

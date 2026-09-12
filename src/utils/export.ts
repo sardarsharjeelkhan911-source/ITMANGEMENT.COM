@@ -15,6 +15,9 @@ export const exportElementToPdf = async (element: HTMLElement, filename: string)
 }
 
 export const exportRowsToExcel = async (rows: ExportRow[], filename: string) => {
+  if (!rows.length) {
+    throw new Error('No data available to export.')
+  }
   const headers = Object.keys(rows[0] ?? {})
   const data = [headers, ...rows.map((row) => headers.map((header) => row[header] ?? ''))]
   await writeExcelFile(data).toFile(filename)
