@@ -341,14 +341,14 @@ function App() {
                   description: `Set ${customer.name} to ${status}?`,
                   confirmLabel: 'Update Status',
                   onConfirm: () => {
-                    const result = setCustomerStatus(bankData, customerId, status)
-                    setBankData(
-                      appendAuditLog(
+                    setBankData((current) => {
+                      const result = setCustomerStatus(current, customerId, status)
+                      return appendAuditLog(
                         result.data,
                         `Changed customer ${result.customer.name} status to ${status}`,
                         sessionUser,
-                      ),
-                    )
+                      )
+                    })
                     pushToast('success', `Customer status updated to ${status}.`)
                   },
                 })
@@ -377,14 +377,14 @@ function App() {
                   description: `Set account ${account.accountNumber} to ${status}?`,
                   confirmLabel: 'Update Account',
                   onConfirm: () => {
-                    const result = setAccountStatus(bankData, accountId, status)
-                    setBankData(
-                      appendAuditLog(
+                    setBankData((current) => {
+                      const result = setAccountStatus(current, accountId, status)
+                      return appendAuditLog(
                         result.data,
                         `Changed account ${result.account.accountNumber} status to ${status}`,
                         sessionUser,
-                      ),
-                    )
+                      )
+                    })
                     pushToast('success', `Account status updated to ${status}.`)
                   },
                 })

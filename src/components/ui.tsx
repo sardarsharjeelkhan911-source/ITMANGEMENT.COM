@@ -53,7 +53,7 @@ export const Modal = ({ children, isOpen, onClose, title }: { children: ReactNod
       <div aria-labelledby={headingId} aria-modal="true" className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl" role="dialog">
         <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
           <h3 className="text-lg font-semibold text-slate-900" id={headingId}>{title}</h3>
-          <button className="rounded-full p-2 text-slate-500 hover:bg-slate-100" onClick={onClose} type="button"><X className="h-5 w-5" /></button>
+          <button aria-label="Close dialog" className="rounded-full p-2 text-slate-500 hover:bg-slate-100" onClick={onClose} type="button"><X className="h-5 w-5" /></button>
         </div>
         <div className="max-h-[calc(90vh-72px)] overflow-y-auto p-6">{children}</div>
       </div>

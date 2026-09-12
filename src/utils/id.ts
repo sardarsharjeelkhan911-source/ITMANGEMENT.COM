@@ -15,10 +15,9 @@ export const generateAuditId = (logs: AuditLog[]) => `AL-${nextPaddedValue(logs.
 export const generateTransactionRowId = (transactions: Transaction[]) => `TR-${nextPaddedValue(transactions.map((item) => item.id), 6)}`
 export const generateTransactionId = (transactions: Transaction[]) => `TX-${nextPaddedValue(transactions.map((item) => item.transactionId), 6)}`
 export const generateAccountId = (accounts: Account[]) => `A-${nextPaddedValue(accounts.map((item) => item.id))}`
+export const formatAccountNumber = (sequence: number) => `PK00BMST${String(sequence).padStart(10, '0')}`
 
 export const generateAccountNumber = (accounts: Account[]) => {
-  const next = String(
-    accounts.reduce((max, account) => Math.max(max, extractSequence(account.accountNumber)), 0) + 1,
-  ).padStart(10, '0')
-  return `PK00BMST${next}`
+  const next = accounts.reduce((max, account) => Math.max(max, extractSequence(account.accountNumber)), 0) + 1
+  return formatAccountNumber(next)
 }

@@ -6,7 +6,7 @@ export const LoginPage = ({ error, onSubmit, password, setPassword, username, se
     <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.1fr,0.9fr] lg:items-center">
       <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-2xl lg:p-12">
         <div className="inline-flex rounded-2xl bg-blue-600/20 p-3 text-blue-300"><Landmark className="h-8 w-8" /></div>
-        <p className="mt-6 text-sm uppercase tracking-[0.3em] text-blue-300">ITMANGEMENT.COM</p>
+        <p className="mt-6 text-sm uppercase tracking-[0.3em] text-blue-300">ITMANAGEMENT.COM</p>
         <h1 className="mt-3 text-4xl font-semibold leading-tight">Professional Bank Management System</h1>
         <p className="mt-4 max-w-xl text-sm text-slate-300">Manage customers, accounts, cash operations, service requests, reports, users, and audit logs from one localStorage-backed banking dashboard.</p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">{['admin/admin', 'manager/manager', 'cashier/cashier', 'csr/csr'].map((credential) => <div className="rounded-2xl border border-white/10 bg-white/5 p-4" key={credential}><p className="text-xs uppercase tracking-[0.2em] text-blue-200">Demo Login</p><p className="mt-2 text-lg font-semibold">{credential}</p></div>)}</div>

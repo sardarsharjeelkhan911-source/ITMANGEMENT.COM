@@ -1,5 +1,6 @@
 import { subDays } from 'date-fns'
 import type { Account, BankData, ServiceRequest, Transaction, User } from '../types/bank'
+import { formatAccountNumber } from '../utils/id'
 
 type TransactionSeed = Pick<
   Transaction,
@@ -33,14 +34,14 @@ const customers = [
 ] as const
 
 const baseAccounts: Account[] = [
-  { id: 'A-00001', accountNumber: 'PK00BMST0000000001', customerId: 'C-00001', type: 'current', balance: 0, openingBalance: 250000, status: 'active', createdAt: seededIso(88, 10, 0) },
-  { id: 'A-00002', accountNumber: 'PK00BMST0000000002', customerId: 'C-00002', type: 'savings', balance: 0, openingBalance: 175000, status: 'active', createdAt: seededIso(84, 10, 30), interestRate: 7 },
-  { id: 'A-00003', accountNumber: 'PK00BMST0000000003', customerId: 'C-00003', type: 'current', balance: 0, openingBalance: 98000, status: 'active', createdAt: seededIso(79, 11, 15) },
-  { id: 'A-00004', accountNumber: 'PK00BMST0000000004', customerId: 'C-00004', type: 'savings', balance: 0, openingBalance: 320000, status: 'active', createdAt: seededIso(72, 13, 0), interestRate: 7.5 },
-  { id: 'A-00005', accountNumber: 'PK00BMST0000000005', customerId: 'C-00005', type: 'current', balance: 0, openingBalance: 87000, status: 'active', createdAt: seededIso(69, 14, 30) },
-  { id: 'A-00006', accountNumber: 'PK00BMST0000000006', customerId: 'C-00006', type: 'savings', balance: 0, openingBalance: 145000, status: 'active', createdAt: seededIso(63, 11, 10), interestRate: 6.8 },
-  { id: 'A-00007', accountNumber: 'PK00BMST0000000007', customerId: 'C-00007', type: 'savings', balance: 0, openingBalance: 410000, status: 'dormant', createdAt: seededIso(58, 9, 40), interestRate: 7.2 },
-  { id: 'A-00008', accountNumber: 'PK00BMST0000000008', customerId: 'C-00008', type: 'current', balance: 0, openingBalance: 56000, status: 'active', createdAt: seededIso(52, 15, 0) },
+  { id: 'A-00001', accountNumber: formatAccountNumber(1), customerId: 'C-00001', type: 'current', balance: 0, openingBalance: 250000, status: 'active', createdAt: seededIso(88, 10, 0) },
+  { id: 'A-00002', accountNumber: formatAccountNumber(2), customerId: 'C-00002', type: 'savings', balance: 0, openingBalance: 175000, status: 'active', createdAt: seededIso(84, 10, 30), interestRate: 7 },
+  { id: 'A-00003', accountNumber: formatAccountNumber(3), customerId: 'C-00003', type: 'current', balance: 0, openingBalance: 98000, status: 'active', createdAt: seededIso(79, 11, 15) },
+  { id: 'A-00004', accountNumber: formatAccountNumber(4), customerId: 'C-00004', type: 'savings', balance: 0, openingBalance: 320000, status: 'active', createdAt: seededIso(72, 13, 0), interestRate: 7.5 },
+  { id: 'A-00005', accountNumber: formatAccountNumber(5), customerId: 'C-00005', type: 'current', balance: 0, openingBalance: 87000, status: 'active', createdAt: seededIso(69, 14, 30) },
+  { id: 'A-00006', accountNumber: formatAccountNumber(6), customerId: 'C-00006', type: 'savings', balance: 0, openingBalance: 145000, status: 'active', createdAt: seededIso(63, 11, 10), interestRate: 6.8 },
+  { id: 'A-00007', accountNumber: formatAccountNumber(7), customerId: 'C-00007', type: 'savings', balance: 0, openingBalance: 410000, status: 'dormant', createdAt: seededIso(58, 9, 40), interestRate: 7.2 },
+  { id: 'A-00008', accountNumber: formatAccountNumber(8), customerId: 'C-00008', type: 'current', balance: 0, openingBalance: 56000, status: 'active', createdAt: seededIso(52, 15, 0) },
 ]
 
 const transactionSpecs: TransactionSeed[] = [

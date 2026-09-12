@@ -13,10 +13,10 @@ export const PageTitle = ({ title, description }: { title: string; description: 
 
 export const Sidebar = ({ activeRoute, isOpen, onClose, onNavigate, routes, user }: { routes: RouteDefinition[]; activeRoute: string; isOpen: boolean; onClose: () => void; onNavigate: (route: string) => void; user: User }) => (
   <>
-    <div className={`fixed inset-0 z-30 bg-slate-950/40 lg:hidden ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} />
+    <button aria-label="Close sidebar" className={`fixed inset-0 z-30 bg-slate-950/40 lg:hidden ${isOpen ? 'block' : 'hidden'}`} onClick={onClose} type="button" />
     <aside className={`fixed inset-y-0 left-0 z-40 w-72 transform border-r border-slate-200 bg-slate-950 text-slate-100 transition lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4"><div><p className="text-xs uppercase tracking-[0.3em] text-blue-300">ITMANGEMENT.COM</p><h2 className="text-lg font-semibold">Bank Management System</h2></div><button className="rounded-full p-2 text-slate-400 hover:bg-slate-800 lg:hidden" onClick={onClose} type="button"><X className="h-5 w-5" /></button></div>
+        <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4"><div><p className="text-xs uppercase tracking-[0.3em] text-blue-300">ITMANAGEMENT.COM</p><h2 className="text-lg font-semibold">Bank Management System</h2></div><button className="rounded-full p-2 text-slate-400 hover:bg-slate-800 lg:hidden" onClick={onClose} type="button"><X className="h-5 w-5" /></button></div>
         <div className="border-b border-slate-800 px-5 py-4 text-sm text-slate-300">Signed in as <span className="font-semibold text-white">{user.name}</span></div>
         <nav className="flex-1 space-y-1 px-3 py-5">{routes.map((route) => { const Icon = route.icon; const active = activeRoute === route.key; return <button className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${active ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-900 hover:text-white'}`} key={route.key} onClick={() => { onNavigate(route.key); onClose() }} type="button"><Icon className="h-5 w-5" />{route.label}</button> })}</nav>
       </div>
