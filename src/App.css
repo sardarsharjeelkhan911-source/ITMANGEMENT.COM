@@ -5,6 +5,10 @@
   color: #1e293b;
 }
 
+.app-shell.sidebar-collapsed {
+  grid-template-columns: 76px 1fr;
+}
+
 .sidebar {
   background: #0f172a;
   color: #e2e8f0;
@@ -175,8 +179,7 @@
   color: #64748b;
 }
 
-.quick-actions,
-.view-header button {
+.quick-actions {
   display: flex;
   gap: 0.6rem;
 }
@@ -289,12 +292,21 @@ td {
   font-size: 0.9rem;
 }
 
-tbody tr {
-  cursor: pointer;
-}
-
 tbody tr:hover {
   background: #f8fafc;
+}
+
+.table-link {
+  border: 0;
+  background: transparent;
+  color: #0369a1;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.table-link:hover {
+  text-decoration: underline;
 }
 
 .filters {

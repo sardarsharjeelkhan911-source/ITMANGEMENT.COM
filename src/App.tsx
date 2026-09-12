@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import type { FormEvent, ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { FormEvent, KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react'
 import './App.css'
 import {
   deviceDistribution,
@@ -34,6 +34,12 @@ const fromPath = (path: string): ViewKey => {
   return navItems.find((item) => item.key === cleanPath)?.key ?? 'dashboard'
 }
 
+const getMaxNumericId = (ids: string[], prefix: string) =>
+  ids.reduce((max, id) => {
+    const numeric = Number.parseInt(id.replace(prefix, ''), 10)
+    return Number.isNaN(numeric) ? max : Math.max(max, numeric)
+  }, 0)
+
 function App() {
   const [activeView, setActiveView] = useState<ViewKey>(() => fromPath(window.location.pathname))
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -48,6 +54,8 @@ function App() {
   const [deviceHealthFilter, setDeviceHealthFilter] = useState<'All' | Device['health']>('All')
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
   const [creating, setCreating] = useState(false)
+  const ticketIdCounterRef = useRef(getMaxNumericId(ticketsSeed.map((ticket) => ticket.id), 'INC-'))
+  const deviceIdCounterRef = useRef(getMaxNumericId(devicesSeed.map((device) => device.id), 'DEV-'))
 
   useEffect(() => {
     const handlePopState = () => setActiveView(fromPath(window.location.pathname))
@@ -96,6 +104,9 @@ function App() {
 
   const handleTicketCreate = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (creating) {
+      return
+    }
     const form = event.currentTarget
     const formData = new FormData(form)
 
@@ -111,25 +122,24 @@ function App() {
     }
 
     setCreating(true)
-    setTimeout(() => {
-      const ticket: Ticket = {
-        id: `INC-${Math.floor(1050 + Math.random() * 900)}`,
-        subject,
-        requester,
-        assignee,
-        priority,
-        status: 'Open',
-        updatedAt: 'Just now',
-        category,
-        description,
-      }
-      setTickets((current) => [ticket, ...current])
-      setShowTicketModal(false)
-      form.reset()
-      setCreating(false)
-      setActiveView('tickets')
-      window.history.pushState({}, '', '/tickets')
-    }, 450)
+    ticketIdCounterRef.current += 1
+    const ticket: Ticket = {
+      id: `INC-${ticketIdCounterRef.current}`,
+      subject,
+      requester,
+      assignee,
+      priority,
+      status: 'Open',
+      updatedAt: 'Just now',
+      category,
+      description,
+    }
+    setTickets((current) => [ticket, ...current])
+    setShowTicketModal(false)
+    form.reset()
+    setCreating(false)
+    setActiveView('tickets')
+    window.history.pushState({}, '', '/tickets')
   }
 
   const handleDeviceCreate = (event: FormEvent<HTMLFormElement>) => {
@@ -148,7 +158,7 @@ function App() {
     }
 
     const device: Device = {
-      id: `DEV-${Math.floor(2300 + Math.random() * 900)}`,
+      id: `DEV-${++deviceIdCounterRef.current}`,
       name,
       type,
       os,
@@ -166,7 +176,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
           <span className="brand-mark">IT</span>
@@ -577,9 +587,13 @@ function TicketTable({ tickets, onSelect }: { tickets: Ticket[]; onSelect: (tick
         </thead>
         <tbody>
           {tickets.map((ticket) => (
-            <tr key={ticket.id} onClick={() => onSelect(ticket)}>
+            <tr key={ticket.id}>
               <td>{ticket.id}</td>
-              <td>{ticket.subject}</td>
+              <td>
+                <button type="button" className="table-link" onClick={() => onSelect(ticket)}>
+                  {ticket.subject}
+                </button>
+              </td>
               <td>{ticket.requester}</td>
               <td>{ticket.assignee}</td>
               <td>
@@ -625,14 +639,57 @@ function SimpleBarChart({ data }: { data: { day: string; count: number }[] }) {
 }
 
 function Modal({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
+  const modalRef = useRef<HTMLDivElement>(null)
+  const previousFocusedRef = useRef<HTMLElement | null>(null)
+  const focusableSelector =
+    'button, input, select, textarea, [href], [tabindex]:not([tabindex="-1"])'
+
+  const handleModalKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      onClose()
+      return
+    }
+
+    if (event.key === 'Tab') {
+      const focusable = modalRef.current?.querySelectorAll<HTMLElement>(focusableSelector)
+      if (!focusable?.length) {
+        return
+      }
+
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+  }
+
+  useEffect(() => {
+    previousFocusedRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const firstFocusable = modalRef.current?.querySelector<HTMLElement>(focusableSelector)
+    firstFocusable?.focus()
+
+    return () => {
+      previousFocusedRef.current?.focus()
+    }
+  }, [])
+
   return (
     <div className="modal-backdrop" role="presentation" onClick={onClose}>
       <div
+        ref={modalRef}
         className="modal"
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        tabIndex={-1}
         onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleModalKeyDown}
       >
         <div className="modal-header">
           <h3>{title}</h3>
