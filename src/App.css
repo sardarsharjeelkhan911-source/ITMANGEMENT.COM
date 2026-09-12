@@ -382,6 +382,24 @@
   margin-top: 20px;
 }
 
+.opencode-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.opencode-link:hover {
+  background: rgba(124, 58, 237, 0.16);
+}
+
 @media (max-width: 960px) {
   .hero,
   .content-grid,

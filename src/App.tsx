@@ -882,6 +882,15 @@ function App() {
             <span className="label">Session</span>
             <strong>{sessionUser?.fullName ?? 'Guest'}</strong>
             <span className="tag">{sessionUser?.role ?? 'Not signed in'}</span>
+            <a
+              className="opencode-link"
+              href="https://opencode.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Visit opencode.com"
+            >
+              opencode.com
+            </a>
           </div>
         </aside>
 
