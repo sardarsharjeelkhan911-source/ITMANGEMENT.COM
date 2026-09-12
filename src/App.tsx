@@ -106,8 +106,6 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value)
 
-const toTitleCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1)
-
 const seedCustomers: Customer[] = [
   {
     id: 1,
@@ -701,7 +699,7 @@ function App() {
       const newTransaction: Transaction = {
         id: Date.now(),
         type: transactionMode,
-        accountId: transactionMode === 'Transfer' ? sourceAccount.id : sourceAccount.id,
+        accountId: sourceAccount.id,
         customerId: sourceAccount.customerId,
         amount,
         balanceAfter:
