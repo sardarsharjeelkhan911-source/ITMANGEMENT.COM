@@ -1,2 +1,9 @@
 # ITMANGEMENT.COM
-WEB DEVELOPER
+E-COMMERCE STORE
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
