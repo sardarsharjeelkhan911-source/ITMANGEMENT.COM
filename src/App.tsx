@@ -1,309 +1,156 @@
-import { useMemo, useState } from 'react'
-import heroImg from './assets/hero.png'
+import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
-type Product = {
+type Todo = {
   id: number
-  name: string
-  category: string
-  price: number
-  rating: string
-  badge: string
-  description: string
+  text: string
+  completed: boolean
 }
 
-type CartItem = Product & {
-  quantity: number
-  lineTotal: number
-}
+type Filter = 'all' | 'active' | 'completed'
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'Pulse Air Buds',
-    category: 'Tech',
-    price: 79,
-    rating: '4.9',
-    badge: 'Best seller',
-    description: 'Noise-free wireless earbuds with 30-hour battery life.',
-  },
-  {
-    id: 2,
-    name: 'Urban Layer Jacket',
-    category: 'Fashion',
-    price: 129,
-    rating: '4.8',
-    badge: 'Trending',
-    description: 'Lightweight water-resistant jacket for everyday wear.',
-  },
-  {
-    id: 3,
-    name: 'Nord Desk Lamp',
-    category: 'Home',
-    price: 54,
-    rating: '4.7',
-    badge: 'New',
-    description: 'Minimal desk lamp with warm and cool lighting modes.',
-  },
-  {
-    id: 4,
-    name: 'Cloud Runner Sneakers',
-    category: 'Fashion',
-    price: 99,
-    rating: '4.9',
-    badge: 'Editor pick',
-    description: 'Breathable sneakers designed for daily comfort.',
-  },
-  {
-    id: 5,
-    name: 'Smart Desk Hub',
-    category: 'Tech',
-    price: 149,
-    rating: '5.0',
-    badge: 'Premium',
-    description: 'Dock, charge, and organize your workspace in one hub.',
-  },
-  {
-    id: 6,
-    name: 'Softform Chair',
-    category: 'Home',
-    price: 219,
-    rating: '4.8',
-    badge: 'Limited',
-    description: 'Supportive accent chair built for long reading sessions.',
-  },
-]
-
-const categories = ['All', 'Tech', 'Fashion', 'Home']
+const STORAGE_KEY = 'itmangement-todos'
 
 function App() {
-  const [activeCategory, setActiveCategory] = useState('All')
-  const [cart, setCart] = useState<{ id: number; quantity: number }[]>([])
+  const [draft, setDraft] = useState('')
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEY)
+      return saved ? (JSON.parse(saved) as Todo[]) : []
+    } catch {
+      return []
+    }
+  })
+  const [filter, setFilter] = useState<Filter>('all')
 
-  const filteredProducts = useMemo(() => {
-    if (activeCategory === 'All') {
-      return products
+  useEffect(() => {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+  }, [todos])
+
+  const visibleTodos = useMemo(() => {
+    if (filter === 'active') {
+      return todos.filter((todo) => !todo.completed)
     }
 
-    return products.filter((product) => product.category === activeCategory)
-  }, [activeCategory])
+    if (filter === 'completed') {
+      return todos.filter((todo) => todo.completed)
+    }
 
-  const cartItems = useMemo(
-    () =>
-      cart
-        .map((item) => {
-          const product = products.find((entry) => entry.id === item.id)
+    return todos
+  }, [filter, todos])
 
-          if (!product) {
-            return null
-          }
+  const remainingCount = todos.filter((todo) => !todo.completed).length
+  const completedCount = todos.length - remainingCount
 
-          return {
-            ...product,
-            quantity: item.quantity,
-            lineTotal: product.price * item.quantity,
-          } satisfies CartItem
-        })
-        .filter((item): item is CartItem => item !== null),
-    [cart],
-  )
+  const addTodo = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
-  const subtotal = useMemo(
-    () => cartItems.reduce((total, item) => total + item.lineTotal, 0),
-    [cartItems],
-  )
-  const shipping = subtotal >= 150 || subtotal === 0 ? 0 : 12
-  const total = subtotal + shipping
+    const trimmedText = draft.trim()
+    if (!trimmedText) {
+      return
+    }
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
-
-  const addToCart = (productId: number) => {
-    setCart((current) => {
-      const existing = current.find((item) => item.id === productId)
-
-      if (existing) {
-        return current.map((item) =>
-          item.id === productId ? { ...item, quantity: item.quantity + 1 } : item,
-        )
-      }
-
-      return [...current, { id: productId, quantity: 1 }]
-    })
+    setTodos((current) => [
+      {
+        id: Date.now() + Math.random(),
+        text: trimmedText,
+        completed: false,
+      },
+      ...current,
+    ])
+    setDraft('')
   }
 
-  const updateQuantity = (productId: number, delta: number) => {
-    setCart((current) =>
-      current
-        .map((item) =>
-          item.id === productId ? { ...item, quantity: item.quantity + delta } : item,
-        )
-        .filter((item) => item.quantity > 0),
+  const toggleTodo = (id: number) => {
+    setTodos((current) =>
+      current.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
     )
   }
 
-  const clearCart = () => setCart([])
+  const deleteTodo = (id: number) => {
+    setTodos((current) => current.filter((todo) => todo.id !== id))
+  }
+
+  const clearCompleted = () => {
+    setTodos((current) => current.filter((todo) => !todo.completed))
+  }
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div>
-          <p className="eyebrow">ITMANGEMENT.COM</p>
-          <h1>Fresh deals for a better shopping day.</h1>
-        </div>
-        <div className="topbar-badge">
-          <span>Cart</span>
-          <strong>{cartCount}</strong>
-        </div>
-      </header>
-
-      <main className="page">
-        <section className="hero">
-          <div className="hero-copy">
-            <p className="eyebrow">New season drop</p>
-            <h2>One storefront for tech, fashion, and home essentials.</h2>
-            <p className="hero-text">
-              Discover curated products, quick add-to-cart actions, and a clean checkout
-              summary that feels ready for launch.
-            </p>
-
-            <div className="hero-actions">
-              <a href="#products" className="primary-button">
-                Shop products
-              </a>
-              <button type="button" className="secondary-button" onClick={clearCart}>
-                Reset cart
-              </button>
-            </div>
-
-            <ul className="stats">
-              <li>
-                <strong>120+</strong>
-                <span>Products ready</span>
-              </li>
-              <li>
-                <strong>4.8★</strong>
-                <span>Average rating</span>
-              </li>
-              <li>
-                <strong>Same day</strong>
-                <span>Shipping in 3 cities</span>
-              </li>
-            </ul>
+    <div className="todo-app-shell">
+      <div className="todo-card">
+        <header className="todo-header">
+          <div>
+            <p className="eyebrow">ITMANGEMENT.COM</p>
+            <h1>To-Do Board</h1>
           </div>
-
-          <div className="hero-visual">
-            <img src={heroImg} alt="Lifestyle preview of the ecommerce collection" />
-            <div className="floating-card">
-              <span>Limited offer</span>
-              <strong>20% off selected bundles</strong>
-              <p>Build your cart with curated picks and fast checkout.</p>
-            </div>
+          <div className="summary-badge" aria-live="polite">
+            <span>Remaining</span>
+            <strong>{remainingCount}</strong>
           </div>
-        </section>
+        </header>
 
-        <section className="content-grid" id="products">
-          <div className="catalog">
-            <div className="section-heading">
-              <div>
-                <p className="eyebrow">Catalog</p>
-                <h3>Featured products</h3>
-              </div>
+        <form className="todo-form" onSubmit={addTodo}>
+          <input
+            type="text"
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder="Add a new task"
+            aria-label="Add a new task"
+          />
+          <button type="submit">Add task</button>
+        </form>
 
-              <div className="category-list" role="tablist" aria-label="Product categories">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    type="button"
-                    className={category === activeCategory ? 'category-chip active' : 'category-chip'}
-                    onClick={() => setActiveCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="product-grid">
-              {filteredProducts.map((product) => (
-                <article key={product.id} className="product-card">
-                  <div className="product-meta">
-                    <span>{product.badge}</span>
-                    <strong>{product.rating}★</strong>
-                  </div>
-                  <h4>{product.name}</h4>
-                  <p>{product.description}</p>
-                  <div className="product-footer">
-                    <strong>${product.price}</strong>
-                    <button type="button" onClick={() => addToCart(product.id)}>
-                      Add to cart
-                    </button>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <aside className="cart-panel" aria-label="Shopping cart">
-            <div className="section-heading compact">
-              <div>
-                <p className="eyebrow">Checkout</p>
-                <h3>Your cart</h3>
-              </div>
-              <button type="button" className="link-button" onClick={clearCart}>
-                Clear all
-              </button>
-            </div>
-
-            <div className="cart-items">
-              {cartItems.length === 0 ? (
-                <div className="empty-state">
-                  <strong>Your cart is empty</strong>
-                  <p>Add products to see the order summary update instantly.</p>
-                </div>
-              ) : (
-                cartItems.map((item) => (
-                  <div key={item.id} className="cart-item">
-                    <div>
-                      <strong>{item.name}</strong>
-                      <p>
-                        ${item.price} × {item.quantity}
-                      </p>
-                    </div>
-                    <div className="cart-controls">
-                      <button type="button" onClick={() => updateQuantity(item.id, -1)}>
-                        −
-                      </button>
-                      <span>{item.quantity}</span>
-                      <button type="button" onClick={() => updateQuantity(item.id, 1)}>
-                        +
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="summary">
-              <div>
-                <span>Subtotal</span>
-                <strong>${subtotal}</strong>
-              </div>
-              <div>
-                <span>Shipping</span>
-                <strong>{shipping === 0 ? 'Free' : `$${shipping}`}</strong>
-              </div>
-              <div className="total">
-                <span>Total</span>
-                <strong>${total}</strong>
-              </div>
-            </div>
-
-            <button type="button" className="checkout-button">
-              Proceed to checkout
+        <div className="todo-toolbar" aria-label="Task filters">
+          {(['all', 'active', 'completed'] as Filter[]).map((option) => (
+            <button
+              key={option}
+              type="button"
+              className={filter === option ? 'filter-button active' : 'filter-button'}
+              onClick={() => setFilter(option)}
+            >
+              {option.charAt(0).toUpperCase() + option.slice(1)}
             </button>
-          </aside>
-        </section>
-      </main>
+          ))}
+        </div>
+
+        <div className="todo-stats">
+          <span>{todos.length} total</span>
+          <span>{completedCount} done</span>
+        </div>
+
+        <ul className="todo-list">
+          {visibleTodos.length === 0 ? (
+            <li className="empty-state">
+              <p>No tasks here yet.</p>
+              <span>Add your first item to get started.</span>
+            </li>
+          ) : (
+            visibleTodos.map((todo) => (
+              <li key={todo.id} className={todo.completed ? 'todo-item complete' : 'todo-item'}>
+                <label className="todo-check">
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={() => toggleTodo(todo.id)}
+                  />
+                  <span>{todo.text}</span>
+                </label>
+                <button type="button" className="delete-button" onClick={() => deleteTodo(todo.id)}>
+                  Delete
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+
+        <div className="todo-footer">
+          <button type="button" className="clear-button" onClick={clearCompleted} disabled={completedCount === 0}>
+            Clear completed
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
