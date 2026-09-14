@@ -23,6 +23,9 @@ npm run dev          # UI: http://localhost:5173 (proxies /api to port 4000)
 ```
 Use two terminals. On Windows PowerShell, use `Copy-Item .env.example .env` and start the same npm commands in separate VS Code terminals.
 
+### Deployment URL configuration
+The storefront uses same-origin `/api` URLs by default, so it works on any domain or subdirectory when the frontend and API are reverse-proxied together. For a separate API domain, set `VITE_API_URL` at **build time** (for example `https://api.example.com/api`) and set the API `CORS_ORIGIN` to the storefront’s exact origin. The hero image is bundled by Vite rather than linked through a development-only `/src/...` URL.
+
 ## Database / Prisma
 The authoritative PostgreSQL model, indexes, relations, and constraints are in `prisma/schema.prisma`. Once registry access is available, install `prisma` and `@prisma/client`, then run:
 ```bash
